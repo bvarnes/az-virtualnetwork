@@ -1,8 +1,69 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {},
-  "variables": {},
-  "resources": [],
+  "parameters": {
+    "Location": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "allowedValues": [
+        "eastus2",
+        "eastus",
+        "wastus"
+      ],
+      "defaultValue": "eastus2",
+      "metadata": {
+        "description": "Azure Region to Deploy Virtual Network."
+      }
+    },
+    "VNetName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "metadata": {
+        "description": "Virtual Network Name. Allowed length 2 - 64 characters."
+      }
+    }
+  },
+  "variables": {
+    "VNetPrefix": "10.0.0.0/16",
+    "VNetSubnet1Name": "Subnet-1",
+    "VNetSubnet1Prefix": "10.0.0.0/24",
+    "VNetSubnet2Name": "Subnet-2",
+    "VNetSubnet2Prefix": "10.0.1.0/24"
+  },
+  "resources": [
+    {
+      "name": "[parameters('VNetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[parameters('Location')]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "VNet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('VNetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('VNetSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('VNetSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('VNetSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('VNetSubnet2Prefix')]"
+            }
+          }
+        ]
+      }
+    }
+    ],
   "outputs": {}
 }
