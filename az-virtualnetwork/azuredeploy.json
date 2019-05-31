@@ -1,72 +1,106 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "Location": {
-            "type": "string",
-            "allowedValues": [
-                "eastus2",
-                "westus"
-            ],
-            "defaultValue": "eastus2",
-            "metadata": {
-                "description": "Azure Region to Deploy Virtual Network."
-            }
-        },
-        "VNetName": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 64,
-            "metadata": {
-                "description": "Virtual Network Name. Allowed length 2 - 64 characters."
-            }
-        },
-        "VNetPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Virtual Network Address Prefix."
-            }
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Location": {
+      "type": "string",
+      "allowedValues": [
+        "eastus2",
+        "westus"
+      ],
+      "defaultValue": "eastus2",
+      "metadata": {
+        "description": "Azure Region to Deploy Virtual Network."
+      }
     },
-    "variables": {
-        "vnetnameSubnet1Name": "Subnet-1",
-        "vnetnameSubnet1Prefix": "10.0.0.0/24",
-        "vnetnameSubnet2Name": "Subnet-2",
-        "vnetnameSubnet2Prefix": "10.0.1.0/24"
-    
+    "ResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name. Allowed length 2 - 64 characters."
+      }
     },
-    "resources": [
-        {
-            "apiVersion": "2018-10-01",
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('vnetName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
-            "tags": {
-              "displayName": "Virtual Network"
-            },
-            "properties": {
-              "addressSpace": {
-                "addressPrefixes": [
-                  "[parameters('VNetPrefix')]"
-                ]
+    "VNetName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "metadata": {
+        "description": "Virtual Network Name. Allowed length 2 - 64 characters."
+      }
+    },
+    "VNetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Address Prefix."
+      }
+    }
+  },
+  "variables": {
+    "vnetnameSubnet1Name": "Subnet-1",
+    "vnetnameSubnet1Prefix": "10.0.0.0/24",
+    "vnetnameSubnet2Name": "Subnet-2",
+    "vnetnameSubnet2Prefix": "10.0.1.0/24"
+
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-05-10",
+      "name": "nestedTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('ResourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "apiVersion": "2018-10-01",
+              "type": "Microsoft.Network/virtualNetworks",
+              "name": "[parameters('vnetName')]",
+              "location": "[parameters('location')]",
+              "dependsOn": [],
+              "tags": {
+                "displayName": "Virtual Network"
               },
-              "subnets": [
-                {
-                  "name": "[variables('vnetnameSubnet1Name')]",
-                  "properties": {
-                    "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
-                  }
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[parameters('VNetPrefix')]"
+                  ]
                 },
-                {
-                  "name": "[variables('vnetnameSubnet2Name')]",
-                  "properties": {
-                    "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
+                "resources": [
+                  {
+                    "apiVersion": "2018-10-01",
+                    "type": "subnets",
+                    "location": "[parameters('Location')]",
+                    "name": "[variables('vnetnameSubnet1Name')]",
+                    "dependsOn": [
+                      "[parameters('vnetName')]"
+                    ],
+                    "properties": {
+                      "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
+                    }
+                  },
+                  {
+                    "apiVersion": "2018-10-01",
+                    "type": "subnets",
+                    "location": "[parameters('Location')]",
+                    "name": "[variables('vnetnameSubnet2Name')]",
+                    "dependsOn": [
+                      "[parameters('vnetName')]"
+                    ],
+                    "properties": {
+                      "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             }
+          ]
         }
-    ],
-    "outputs": {}
+      }
+    }
+  ]
 }
