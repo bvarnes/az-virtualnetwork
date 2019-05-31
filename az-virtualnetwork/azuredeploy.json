@@ -40,7 +40,7 @@
     {
       "name": "[parameters('VNetName')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "location": "[parameters('Location']",
+      "location": "[parameters('Location')]",
       "apiVersion": "2016-03-30",
       "dependsOn": [ ],
       "tags": {
