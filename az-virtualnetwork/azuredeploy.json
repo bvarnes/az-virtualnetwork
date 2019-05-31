@@ -21,10 +21,15 @@
       "metadata": {
         "description": "Virtual Network Name. Allowed length 2 - 64 characters."
       }
+    },
+    "VNetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Address Prefix."
+      }
     }
   },
   "variables": {
-    "vnetnamePrefix": "10.0.0.0/16",
     "vnetnameSubnet1Name": "Subnet-1",
     "vnetnameSubnet1Prefix": "10.0.0.0/24",
     "vnetnameSubnet2Name": "Subnet-2",
@@ -33,18 +38,18 @@
   },
   "resources": [
     {
-      "name": "[parameters('vnetname')]",
+      "name": "[parameters('VNetName')]",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "vnetname"
+        "displayName": "Virtual Network"
       },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('vnetnamePrefix')]"
+            "[parameters('VNetPrefix')]"
           ]
         },
         "subnets": [
