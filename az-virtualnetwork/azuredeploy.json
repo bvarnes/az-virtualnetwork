@@ -1,74 +1,110 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "Location": {
-      "type": "string",
-      "allowedValues": [
-        "eastus2",
-        "eastus",
-        "wastus"
-      ],
-      "defaultValue": "eastus2",
-      "metadata": {
-        "description": "Azure Region to Deploy Virtual Network."
-      }
-    },
-    "VNetName": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 64,
-      "metadata": {
-        "description": "Virtual Network Name. Allowed length 2 - 64 characters."
-      }
-    },
-    "VNetPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Virtual Network Address Prefix."
-      }
-    }
-  },
-  "variables": {
-    "vnetnameSubnet1Name": "Subnet-1",
-    "vnetnameSubnet1Prefix": "10.0.0.0/24",
-    "vnetnameSubnet2Name": "Subnet-2",
-    "vnetnameSubnet2Prefix": "10.0.1.0/24"
-    
-  },
-  "resources": [
-    {
-      "name": "[parameters('VNetName')]",
-      "type": "Microsoft.Network/virtualNetworks",
-      "location": "[parameters('Location')]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "Virtual Network"
-      },
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('VNetPrefix')]"
-          ]
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Location": {
+            "type": "string",
+            "allowedValues": [
+                "eastus2",
+                "eastus",
+                "wastus"
+            ],
+            "defaultValue": "eastus2",
+            "metadata": {
+                "description": "Azure Region to Deploy Virtual Network."
+            }
         },
-        "subnets": [
-          {
-            "name": "[variables('vnetnameSubnet1Name')]",
-            "properties": {
-              "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
+        "ResourceGroupName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64,
+            "metadata": {
+              " description": "Virtual Network Name. Allowed length 2 - 64 characters."
             }
-          },
-          {
-            "name": "[variables('vnetnameSubnet2Name')]",
-            "properties": {
-              "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
+        },
+        "VNetName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64,
+            "metadata": {
+                "description": "Virtual Network Name. Allowed length 2 - 64 characters."
             }
-          }
-        ]
-      }
-    }
+        },
+        "VNetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual Network Address Prefix."
+            }
+        }
+    },
+    "variables": {
+        "vnetnameSubnet1Name": "Subnet-1",
+        "vnetnameSubnet1Prefix": "10.0.0.0/24",
+        "vnetnameSubnet2Name": "Subnet-2",
+        "vnetnameSubnet2Prefix": "10.0.1.0/24"
     
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('Location')]",
+            "name": "[parameters('ResourceGroupName')]",
+            "properties": {}
+        },
+        {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2018-08-01",
+              "name": "storageDeployment",
+              "resourceGroup": "[parameters('ResourceGroupName')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.Resources/resourceGroups/', parameters('ResourceGroupName'))]"
+            ],
+            "properties": {
+                  "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#"
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[parameters('VNetName')]",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "location": "[parameters('Location')]",
+                            "apiVersion": "2016-03-30",
+                            "dependsOn": [],
+                            "tags": {
+                              "displayName": "Virtual Network"
+                            },
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                      "[parameters('VNetPrefix')]"
+                                    ]
+                                  },
+                                  "subnets": [
+                                      {
+                                          "name": "[variables('vnetnameSubnet1Name')]",
+                                          "properties": {
+                                            "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
+                                          }
+                                      },
+                                      {
+                                          "name": "[variables('vnetnameSubnet2Name')]",
+                                          "properties": {
+                                            "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
+                                          }
+                                      }
+                                  ] 
+                            }
+                        }
+                    ],
+                    "outputs": {}             
+                }
+            }
+        }
+
     ],
-  "outputs": {}
+    "outputs": {}
 }
