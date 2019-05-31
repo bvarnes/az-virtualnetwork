@@ -43,7 +43,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2018-10-01",
+      "apiVersion": "2017-05-10",
       "name": "nestedTemplate",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[parameters('ResourceGroupName')]",
