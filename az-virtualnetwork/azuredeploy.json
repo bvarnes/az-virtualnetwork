@@ -6,20 +6,11 @@
             "type": "string",
             "allowedValues": [
                 "eastus2",
-                "eastus",
-                "wastus"
+                "westus"
             ],
             "defaultValue": "eastus2",
             "metadata": {
                 "description": "Azure Region to Deploy Virtual Network."
-            }
-        },
-        "ResourceGroupName": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 64,
-            "metadata": {
-              " description": "Virtual Network Name. Allowed length 2 - 64 characters."
             }
         },
         "VNetName": {
