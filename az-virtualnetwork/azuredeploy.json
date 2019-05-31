@@ -4,8 +4,6 @@
   "parameters": {
     "Location": {
       "type": "string",
-      "minLength": 2,
-      "maxLength": 64,
       "allowedValues": [
         "eastus2",
         "eastus",
@@ -26,44 +24,46 @@
     }
   },
   "variables": {
-    "VNetPrefix": "10.0.0.0/16",
-    "VNetSubnet1Name": "Subnet-1",
-    "VNetSubnet1Prefix": "10.0.0.0/24",
-    "VNetSubnet2Name": "Subnet-2",
-    "VNetSubnet2Prefix": "10.0.1.0/24"
+    "vnetnamePrefix": "10.0.0.0/16",
+    "vnetnameSubnet1Name": "Subnet-1",
+    "vnetnameSubnet1Prefix": "10.0.0.0/24",
+    "vnetnameSubnet2Name": "Subnet-2",
+    "vnetnameSubnet2Prefix": "10.0.1.0/24"
+    
   },
   "resources": [
     {
-      "name": "[parameters('VNetName')]",
+      "name": "[parameters('vnetname')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "location": "[parameters('Location')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
-      "dependsOn": [],
+      "dependsOn": [ ],
       "tags": {
-        "displayName": "VNet"
+        "displayName": "vnetname"
       },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('VNetPrefix')]"
+            "[variables('vnetnamePrefix')]"
           ]
         },
         "subnets": [
           {
-            "name": "[variables('VNetSubnet1Name')]",
+            "name": "[variables('vnetnameSubnet1Name')]",
             "properties": {
-              "addressPrefix": "[variables('VNetSubnet1Prefix')]"
+              "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
             }
           },
           {
-            "name": "[variables('VNetSubnet2Name')]",
+            "name": "[variables('vnetnameSubnet2Name')]",
             "properties": {
-              "addressPrefix": "[variables('VNetSubnet2Prefix')]"
+              "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
             }
           }
         ]
       }
     }
+    
     ],
   "outputs": {}
 }
