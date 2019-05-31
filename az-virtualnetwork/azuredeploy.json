@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "Location": {
@@ -46,65 +46,36 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2018-08-01",
-            "location": "[parameters('Location')]",
-            "name": "[parameters('ResourceGroupName')]",
-            "properties": {}
-        },
-        {
-              "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2018-08-01",
-              "name": "storageDeployment",
-              "resourceGroup": "[parameters('ResourceGroupName')]",
-            "dependsOn": [
-              "[resourceId('Microsoft.Resources/resourceGroups/', parameters('ResourceGroupName'))]"
-            ],
+            "apiVersion": "2018-10-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+              "displayName": "Virtual Network"
+            },
             "properties": {
-                  "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2018-01-01/deploymentTemplate.json#"
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "name": "[parameters('VNetName')]",
-                            "type": "Microsoft.Network/virtualNetworks",
-                            "location": "[parameters('Location')]",
-                            "apiVersion": "2016-03-30",
-                            "dependsOn": [],
-                            "tags": {
-                              "displayName": "Virtual Network"
-                            },
-                            "properties": {
-                                "addressSpace": {
-                                    "addressPrefixes": [
-                                      "[parameters('VNetPrefix')]"
-                                    ]
-                                  },
-                                  "subnets": [
-                                      {
-                                          "name": "[variables('vnetnameSubnet1Name')]",
-                                          "properties": {
-                                            "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
-                                          }
-                                      },
-                                      {
-                                          "name": "[variables('vnetnameSubnet2Name')]",
-                                          "properties": {
-                                            "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
-                                          }
-                                      }
-                                  ] 
-                            }
-                        }
-                    ],
-                    "outputs": {}             
+              "addressSpace": {
+                "addressPrefixes": [
+                  "[parameters('VNetPrefix')]"
+                ]
+              },
+              "subnets": [
+                {
+                  "name": "[variables('vnetnameSubnet1Name')]",
+                  "properties": {
+                    "addressPrefix": "[variables('vnetnameSubnet1Prefix')]"
+                  }
+                },
+                {
+                  "name": "[variables('vnetnameSubnet2Name')]",
+                  "properties": {
+                    "addressPrefix": "[variables('vnetnameSubnet2Prefix')]"
+                  }
                 }
+              ]
             }
         }
-
     ],
     "outputs": {}
 }
